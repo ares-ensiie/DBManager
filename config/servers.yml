@@ -1,0 +1,6 @@
+mongodb:
+  ip: 10.0.0.1
+  port: 1234
+postgres:
+  ip: 10.0.0.2
+  port: 4567

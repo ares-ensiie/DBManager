@@ -1,0 +1,26 @@
+- model_class = Database
+.page-header
+  %h1= @database.name
+
+%p
+  %strong Type:
+  = @database.type
+%p
+  %strong Administrateur:
+  = @database.user
+
+%p
+  %strong IP:
+  = SERVERS_INFOS[@database.type]["ip"]
+
+%p
+  %strong Port:
+  = SERVERS_INFOS[@database.type]["port"]
+
+%p
+  %strong Mot de passe:
+  = @database.password
+
+
+= link_to "Retour", databases_path, :class => 'btn btn-default'
+= link_to "Supprimer", database_path(@database), :method => "delete", :data => { :confirm => "Êtes vous sur de vouloir supprimer cette base de données ?" }, :class => 'btn btn-danger'

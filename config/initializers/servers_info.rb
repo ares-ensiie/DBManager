@@ -1,0 +1,1 @@
+SERVERS_INFOS = YAML.load_file("#{Rails.root}/config/servers.yml")

@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  root 'databases#index'
+  resources :databases
+  get '/callback' => 'o_auth#callback'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
