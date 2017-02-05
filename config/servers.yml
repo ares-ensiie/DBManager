@@ -13,3 +13,5 @@ mysql:
   port: 3306
   user: root
   password: test
+
+phpmyadmin: "https://phpmyadmin.ares-ensiie.eu"

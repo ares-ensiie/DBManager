@@ -24,6 +24,10 @@
   %strong Mot de passe:
   = @database.password
 
+- if @database.mysql?
+  %p
+    = link_to "PhpMyAdmin", SERVERS_INFOS["phpmyadmin"], :class=> "btn btn-default", :target => "_blank"
+
 
 = link_to "Retour", databases_path, :class => 'btn btn-default'
 = link_to "Supprimer", database_path(@database), :method => "delete", :data => { :confirm => "Êtes vous sur de vouloir supprimer cette base de données ?" }, :class => 'btn btn-danger'
