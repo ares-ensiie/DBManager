@@ -33,6 +33,10 @@ class DatabasesController < ApplicationController
       result = create_postgresql_db(@database.name, @database.password)
     end
 
+    if @database.mysql?
+      result = create_mysql_db(@database.name, @database.password)
+    end
+
     if result then
       result = @database.save
     end
@@ -73,12 +77,11 @@ class DatabasesController < ApplicationController
       puts "************************"
       puts "* POSTGRES DB CREATION *"
       puts "************************"
-      conn = PG.connect(host: SERVERS_INFOS["postgres"]["ip"], 
-                        port: SERVERS_INFOS["postgres"]["port"], 
-                        user: SERVERS_INFOS["postgres"]["user"], 
-                        password: SERVERS_INFOS["postgres"]["password"], 
+      conn = PG.connect(host: SERVERS_INFOS["postgres"]["ip"],
+                        port: SERVERS_INFOS["postgres"]["port"],
+                        user: SERVERS_INFOS["postgres"]["user"],
+                        password: SERVERS_INFOS["postgres"]["password"],
                         dbname: "postgres")
-      
       puts "DB already exists ?"
       # On test si la DB existe déjà
       res = conn.exec_params("SELECT COUNT(*) from pg_database WHERE datname=$1",[db]);
@@ -115,4 +118,75 @@ class DatabasesController < ApplicationController
       puts "Done !"
       return true
     end
+
+
+    def create_mysql_db(db, password)
+      puts "*********************"
+      puts "* MYSQL DB CREATION *"
+      puts "*********************"
+
+      conn = Mysql2::Client.new(:host => SERVERS_INFOS["mysql"]["ip"],
+                                :username => SERVERS_INFOS["mysql"]["user"],
+                                :password => SERVERS_INFOS["mysql"]["password"],
+                                :port =>SERVERS_INFOS["mysql"]["port"],)
+
+      edb = conn.escape db
+      epassword = conn.escape password
+      puts "Mysql DB exist ? "
+
+      begin
+        dbexists = conn.query "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '#{edb}'"
+      rescue Mysql2::Error => e
+        puts e
+        puts "Failed !"
+        return false
+      end
+      if dbexists.count != 0 then
+        puts "y"
+        return false
+      end
+      puts "n"
+
+      puts "Mysql User exist ? "
+      begin
+         userexist = conn.query "SELECT 1 FROM mysql.user WHERE user = '#{edb}'"
+      rescue Mysql2::Error => e
+        puts e
+        puts "Failed !"
+        return false
+      end
+      if userexist.count != 0 then
+        puts "y"
+        return false
+      end
+      puts "n"
+
+      # On essaie de créer la BDD et l'utilisateur
+      begin
+        puts "Creating user #{db} : #{password}"
+        conn.query "CREATE USER #{edb} IDENTIFIED BY '#{epassword}';";
+        puts "Creating db #{db}"
+        conn.query "CREATE DATABASE IF NOT EXISTS #{edb};"
+        puts "Grant"
+        conn.query "GRANT ALL PRIVILEGES ON #{edb}. * TO #{edb};"
+      rescue Mysql2::Error => e
+        puts e
+        puts "Failed !"
+        return false
+      end
+      puts "Done !"
+      return true
+    end
+
+    # def create_mongo_db(db,password)
+    #   puts "*********************"
+    #   puts "* MONGO DB CREATION *"
+    #   puts "*********************"
+
+    #   client = Mongo::Client.new(["#{SERVERS_INFOS["mongodb"]["ip"]}:#{SERVERS_INFOS["mongodb"]["port"]}"],
+    #                           user: SERVERS_INFOS["mongodb"]["user"],
+    #                           password: SERVERS_INFOS["mongodb"]["password"])
+
+    #   puts client[:system].users.find({user:db}).count()
+    # end
 end

@@ -1,10 +1,15 @@
 mongodb:
-  ip: 10.0.0.1
-  port: 1234
-  user: root
-  password: root
+  ip: 127.0.0.1
+  port: 27017
+  user: admin
+  password: admin
 postgres:
   ip: 127.0.0.1
   port: 5432
   user: admin
   password: admin
+mysql:
+  ip: 127.0.0.1
+  port: 3306
+  user: root
+  password: test

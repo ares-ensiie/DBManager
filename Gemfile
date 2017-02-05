@@ -24,9 +24,13 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'pg'
+gem 'mysql2'
 
 gem 'oauth2'
 gem "haml-rails", "~> 0.9"
+
+gem 'mongo', '~> 2.1'
+
 
 gem "twitter-bootstrap-rails"
 

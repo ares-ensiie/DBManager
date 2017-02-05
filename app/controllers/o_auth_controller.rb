@@ -4,7 +4,7 @@ class OAuthController < ApplicationController
 
   def callback
     set_oauth
-    if params[:error] != nil 
+    if params[:error] != nil
       redirect_to "https://ares-ensiie.eu/"
     else
       access_token = @oauth.auth_code.get_token(params[:code], :redirect_uri => callback_url)
